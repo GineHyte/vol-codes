@@ -3,11 +3,14 @@ import tkinter as tk
 
 from typing import Tuple
 
+PLAYERS = ["перемога захисник", "перемога блокуючий", "поразка захисник", "поразка блокуючий"]
+PLAYERS_SYM = ["wz", "wy", "lz", "ly"]
+
 class MyApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("My App")
-        self.geometry("800x400")
+        self.geometry("1200x800")
 
         self.validate_command = self.register(self.validate_command_func)
         
@@ -18,14 +21,15 @@ class MyApp(tk.Tk):
         self.data = open("./codes.json", "r", encoding="utf-8")
         self.data = json.load(self.data)
 
-    def validate_command_func(self, inp: str) -> bool:
-        if inp == "\n":
-            self.result_label.config(text='aaaaaaaaaaaaaa')
-            return False
-        result = self.get_command(inp)
-        self.result_label.config(text=result[0])
+    def validate_command_func(self, inp: str, widget_name: str) -> bool:
+        i = int(widget_name.split("_")[1])
+        result_label = self.nametowidget(f'result_label_{i}')
+        hint_label = self.nametowidget(f'hint_label_{i}')
+
+        result = self.get_command(f'{PLAYERS_SYM[i]}{inp}')
+        result_label.config(text=result[0])
         if result[2]:
-            self.hint_label.config(text=result[2])
+            hint_label.config(text=result[2])
         return result[1]
 
     def get_command(self, inp: str) -> Tuple[str, bool, str]:
@@ -83,9 +87,9 @@ class MyApp(tk.Tk):
                             else: return NOT_FOUND
                         else: return NOT_FOUND
                     case _:
-                        return "Not found!" if not res else " ".join(res), False, ""
+                        return "Not found!" if not res else "\n".join(res), False, ""
 
-            return " ".join(res), True, "\n".join(hint)
+            return "\n".join(res), True, "\n".join(hint)
         return "Start typing...", True, ""
 
     def submit_code1(self, e: tk.Event):
@@ -105,10 +109,10 @@ class MyApp(tk.Tk):
         e.widget.delete(0, tk.END)      
 
     def submit_code(self, e: tk.Event):
+        i = int(e.widget._name.split("_")[1])
         inp = e.widget.get()
         category = self.category.get()
         game = self.game.get()
-        player = self.player.get()
         with open("./results.json", "r+", encoding="utf-16") as f:
             if f.read() == "":
                 results = {}
@@ -118,10 +122,8 @@ class MyApp(tk.Tk):
             if category not in results:
                 results[category] = {}
             if game not in results[category]:
-                results[category][game] = {}
-            if player not in results[category][game]:
-                results[category][game][player] = []
-            results[category][game][player].append(inp)
+                results[category][game] = []
+            results[category][game].append(f'{PLAYERS_SYM[i]}{inp}')
             f.seek(0)
             json.dump(results, f, indent=4, ensure_ascii=False)
             f.truncate()
@@ -137,22 +139,24 @@ class MyApp(tk.Tk):
         self.game = tk.Entry(self)
         self.game.grid(row=1, column=1, pady=10)
 
-        tk.Label(self, text="Player:").grid(row=2, column=0, pady=10)
-        self.player = tk.Entry(self)
-        self.player.grid(row=2, column=1, pady=10)
 
-        self.entry = tk.Entry(self, 
-                              validatecommand=(self.validate_command, "%P"), validate="key")
-        self.entry.bind('<Return>', self.submit_code)
-        self.entry.grid(row=0, column=2, columnspan=2, pady=10, padx=10)
+        for i, player in enumerate(PLAYERS):
+            tk.Label(self, text=player).grid(row=3, column=0+i, pady=10, padx=10)
         
-        self.result_label = tk.Label(self, text="Start typing...")
-        self.result_label.grid(row=1, column=2, columnspan=2, pady=10, padx=10)
+            entry = tk.Entry(self, name=f"entry_{i}",
+                                validatecommand=(self.validate_command, "%P", "%W"), validate="key")
+            entry.bind('<Return>', self.submit_code)
+            entry.grid(row=4, column=0+i, pady=10, padx=10)
+            
+            tk.Label(self, name=f'result_label_{i}',
+                     text="Start typing...").grid(row=5,
+                     column=0+i, pady=10, padx=10)
 
-        self.hint_label = tk.Label(self, text="Start typing...")
-        self.hint_label.grid(row=2, column=2, columnspan=2, pady=10, padx=10)
+            tk.Label(self, name=f'hint_label_{i}', text="Start typing...",
+                     width=40, height=10).grid(row=6, 
+                     column=0+i, pady=10, padx=10)
+
         
-
 if __name__ == "__main__":
     app = MyApp()
     app.mainloop()
