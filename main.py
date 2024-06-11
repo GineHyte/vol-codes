@@ -153,7 +153,7 @@ class MyApp(tk.Tk):
                      column=0+i, pady=10, padx=10)
 
             tk.Label(self, name=f'hint_label_{i}', text="Start typing...",
-                     width=40, height=10).grid(row=6, 
+                     width=40, height=20).grid(row=6, 
                      column=0+i, pady=10, padx=10)
 
         
