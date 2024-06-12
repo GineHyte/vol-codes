@@ -34,7 +34,6 @@ class VolCodes(tk.Tk):
         self.validate_command = self.register(self.validate_command_func)
         
         self.init_ui()
-<<<<<<< HEAD
         self.check_integrity()
         self.load_data()
 
@@ -51,8 +50,7 @@ class VolCodes(tk.Tk):
             return
         self.data.seek(0)
         self.data = json.load(self.data)
-=======
->>>>>>> 9ca4765f403fc5a26a8dfcfb3a7a2cfc32ec5062
+
 
     def check_integrity(self) -> None:
         path.isfile("./results.json") or open("./results.json", "w", encoding="utf-16").close()
