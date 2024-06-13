@@ -44,12 +44,12 @@ class VolCodes(tk.Tk):
         Returns:
             None
         """
-        self.data = open("./codes.json", "r", encoding="utf-8")
-        if self.data.read() == "":
+        self.data = open("./codes.json", "r", encoding="utf-8-sig")
+        raw_data = self.data.read()
+        if raw_data == "":
             mb.showerror("Error", "The codes.json file is empty!")
             return
-        self.data.seek(0)
-        self.data = json.load(self.data)
+        self.data = json.loads(raw_data)
 
 
     def check_integrity(self) -> None:
