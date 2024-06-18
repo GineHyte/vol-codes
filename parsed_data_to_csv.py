@@ -8,7 +8,7 @@ def transform_data1()-> dict:
     data = {}
     for category, games in RESULTS.items():
         data[category] = {}
-        for game_name, game in games.items():
+        for _, game in games.items():
             for value in game:
                 if value[2] not in data:
                     data[value[2]] = {}
@@ -25,9 +25,8 @@ def transform_data1()-> dict:
                 #     data[category][value[0]][value[2]] = 0
                 # data[category][value[0]][value[2]] += 1
                 data[category][value[0]] += 1
+                data[category]['games_cout'] = len(games)
     return data
-
-
 
 def table1_inner(data: dict) -> list:
     # count all technical move
@@ -38,8 +37,8 @@ def table1_inner(data: dict) -> list:
             for res, count in loc_cat_data.items():
                 if category_or_tech not in result:
                     result[category_or_tech] = []
-                result[category_or_tech].append(str(count))
-                result[category_or_tech].append(f'{round(count*100/data[loc_cat][res])}%')
+                result[category_or_tech].append(str(count/data[loc_cat]['games_cout']))
+                result[category_or_tech].append(f'{round(count*100/data[loc_cat][res], 2)}%')
 
     return [x for x in result.values()]
 
@@ -53,7 +52,6 @@ def table1() -> list:
     for i, code in enumerate(['a', 'b', 'c', 'd', 'e', 'h']):
         if i > len(res)-4: res.append([])
         res[i+3].insert(0, CODES[code]['_'])
-
     return res
 
 def tdlist_to_csv(data:list) -> str:
@@ -62,9 +60,9 @@ def tdlist_to_csv(data:list) -> str:
 if __name__ == "__main__":
     with open('table1.csv', 'w', encoding="utf-16") as f:
         f.write(tdlist_to_csv(table1()))
-    # for line in table1():
-    #     print("|", end="")
-    #     for value in line:
-    #         print(value, end="|")
-    #     print()
-    #     print("-"*(len(''.join(line))+len(line)+1))
+    for line in table1():
+        print("|", end="")
+        for value in line:
+            print(value, end="|")
+        print()
+        print("-"*(len(''.join(line))+len(line)+1))
