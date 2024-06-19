@@ -2,7 +2,7 @@ def transform_data(results: dict)-> dict:
     data = {}
     for category, games in results.items():
         data[category] = {}
-        for game_name, game in games.items():
+        for _, game in games.items():
             for value in game:
                 if value[2] not in data:
                     data[value[2]] = {}
@@ -19,6 +19,7 @@ def transform_data(results: dict)-> dict:
                 #     data[category][value[0]][value[2]] = 0
                 # data[category][value[0]][value[2]] += 1
                 data[category][value[0]] += 1
+                data[category]['games_cout'] = len(games)
     return data
 
 def table_inner(data: dict) -> list:
@@ -27,11 +28,12 @@ def table_inner(data: dict) -> list:
     for category_or_tech, cat_data in data.items():
         if len(category_or_tech) != 1: continue
         for loc_cat, loc_cat_data in cat_data.items():
-            for res, count in loc_cat_data.items():
-                if category_or_tech not in result:
-                    result[category_or_tech] = []
-                result[category_or_tech].append(str(count))
-                result[category_or_tech].append(f'{round(count*100/data[loc_cat][res])}%')
+            if category_or_tech not in result:
+                result[category_or_tech] = []
+            result[category_or_tech].append(str(loc_cat_data['w']/data[loc_cat]['games_cout']).replace('.', ','))
+            result[category_or_tech].append(f'{round(loc_cat_data["w"]*100/data[loc_cat]["w"], 2)}%'.replace('.', ','))
+            result[category_or_tech].append(str(loc_cat_data['l']/data[loc_cat]['games_cout']).replace('.', ','))
+            result[category_or_tech].append(f'{round(loc_cat_data["l"]*100/data[loc_cat]["l"], 2)}%'.replace('.', ','))
 
     return [x for x in result.values()]
 
