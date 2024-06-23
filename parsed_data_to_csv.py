@@ -17,9 +17,9 @@ if __name__ == "__main__":
     data = table2.transform_data(RESULTS)
     with open('table2.csv', 'w', encoding="utf-16") as f:
         f.write(tdlist_to_csv(table2.table(CODES, RESULTS, ['a','b','c','d','e','f','g','h','i','j','k'], 'a')))
-    for line in table2.table(CODES, RESULTS, ['a','b','c','d','e','f','g','h','i','j','k'], 'a'):
-        print("|", end="")
-        for value in line:
-            print(value, end="|")
-        print()
-        print("-"*(len(''.join(line))+len(line)+1))
+    # for line in table2.table(CODES, RESULTS, ['a','b','c','d','e','f','g','h','i','j','k'], 'a'):
+    #     print("|", end="")
+    #     for value in line:
+    #         print(value, end="|")
+    #     print()
+    #     print("-"*(len(''.join(line))+len(line)+1))
