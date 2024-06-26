@@ -65,7 +65,6 @@ def table(codes: dict, results: dict, codes_to_show: list, code_tech: str) -> li
          ['Технічні прийоми', *[*['K']*2, *['%']*2]*6],
          ['Технічні прийоми', *['Б', 'З']*12]]
 
-
     for i, code in enumerate(codes_to_show):
         if i > len(res)-5: res.append([])
         res[i+4].insert(0, codes[code_tech][code])
