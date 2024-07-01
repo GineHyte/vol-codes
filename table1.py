@@ -15,9 +15,6 @@ def transform_data(results: dict)-> dict:
                 
                 if value[0] not in data[category]:
                     data[category][value[0]]= 0
-                # if value[2] not in data[category][value[0]]:
-                #     data[category][value[0]][value[2]] = 0
-                # data[category][value[0]][value[2]] += 1
                 data[category][value[0]] += 1
                 data[category]['games_cout'] = len(games)
     return data

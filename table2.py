@@ -39,7 +39,6 @@ def table_inner(data: dict, tech: str) -> list:
             if cat_age not in cat_data:
                 continue
             for res in ["w", "l"]:
-                print(result)
                 if res not in cat_data[cat_age]:
                     result[cat].extend([*['0']*2,*['0%']*2])
                     continue
@@ -55,9 +54,8 @@ def table_inner(data: dict, tech: str) -> list:
                     result[cat].append(f'\"{round(cat_data[cat_age][res][player_type]*100/data[cat_age][res][player_type][tech], 2)}%\"'.replace('.', ','))
     return result
 
-def table(codes: dict, results: dict, codes_to_show: list, code_tech: str) -> list:
+def table(codes: dict, results: dict, code_tech: str, codes_to_show: list) -> list:
     data = transform_data(results)
-    print(str(data).replace('\'', '"'))
     res_inner = table_inner(data, code_tech)
     res=[['Технічні прийоми', *['\"Вік 13-15 років, разів за гру\"']*8, 
          *['\"Вік 16-17 років, разів за гру\"']*8, *['\"Вік 18-19 років, разів за одну гру\"']*8],

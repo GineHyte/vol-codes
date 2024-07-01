@@ -5,7 +5,13 @@ def transform_data(results: dict, codes: dict)-> dict:
         data[category]['games_cout'] = len(games)
         for _, game_part in games.items():
             for value in game_part:
+                if len(value) != 6: continue
                 game_res, amplua, tech1, tech2, act, zone = list(value)
+
+                try:
+                    zone = str(int(zone))
+                except ValueError:
+                    zone = str(ord(zone) - 96)
 
                 if tech1 not in data[category]: data[category][tech1] = {}
                 if tech2 not in data[category][tech1]: data[category][tech1][tech2] = {f'{x}_zone': {"y": 0, "z": 0} for x in codes[tech1]['zones'].keys()}
