@@ -14,11 +14,17 @@ def tdlist_to_csv(data:list) -> str:
 
 if __name__ == "__main__":
     # Write the tables to CSV files
-    with open("./out/table1.csv", "w+", encoding="UTF-8") as f:
-        f.write(tdlist_to_csv(table1.table(CODES, RESULTS)))
-
-    with open("./out/table2.csv", "w+", encoding="UTF-8") as f:
-        f.write(tdlist_to_csv(table2.table(CODES, RESULTS, "a", ["a", "b", "c", "d", "e", "h"])))
-
-    with open("./out/table3.csv", "w+", encoding="UTF-8") as f:
-        f.write(tdlist_to_csv(table3.table(CODES, RESULTS, "16-17", "a", ["a", "b", "c", "d", "e", "h"])))
+    # with open("./out/table1.csv", "w+", encoding="UTF-8") as f:
+    #     f.write(tdlist_to_csv(table1.table(CODES, RESULTS)))\
+    for l, data in CODES.items():
+        if l in "yzwl":
+            continue
+        args = [x for x in data.keys() if x not in "_funczones"]
+        
+        args = (l, args,)
+        print(args)
+        with open(f"./out/{data['_']}.csv", "w+", encoding="UTF-8") as f:
+            f.write(tdlist_to_csv(table2.table(CODES, RESULTS, *args)))
+        for cat in ("13-15", "16-17", "18-19"):
+            with open(f"./out/{cat} {data['_']}.csv", "w+", encoding="UTF-8") as f:
+                f.write(tdlist_to_csv(table3.table(CODES, RESULTS, cat, *args)))
