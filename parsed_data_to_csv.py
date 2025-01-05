@@ -68,8 +68,8 @@ if __name__ == "__main__":
     # with open("./out/table1.csv", "w+", encoding="UTF-8") as f:
     #     f.write(tdlist_to_csv(table1.table(CODES, RESULTS)))\
 
-    # tdlist_to_word(DOC, tab1.table(CODES, RESULTS))
-    # DOC.add_page_break()
+    tdlist_to_word(DOC, tab1.table(CODES, RESULTS))
+    DOC.add_page_break()
     for l, data in CODES.items():
         if l in "yzwl":
             continue
@@ -79,14 +79,11 @@ if __name__ == "__main__":
             args,
         )
 
-        # tdlist_to_word(DOC, tab2.table(CODES, RESULTS, *args))
-        # DOC.add_page_break()
+        tdlist_to_word(DOC, tab2.table(CODES, RESULTS, *args))
+        DOC.add_page_break()
 
         for cat in ("13-15", "16-17", "18-19"):
             tdlist_to_word(DOC, tab3.table(CODES, RESULTS, cat, *args))
             DOC.add_page_break()
-        # for cat in ("13-15", "16-17", "18-19"):
-        #     with open(f"./out/{cat} {data['_']}.csv", "w+", encoding="UTF-8") as f:
-        #         f.write(tdlist_to_csv(table3.table(CODES, RESULTS, cat, *args)))
 
     DOC.save("./result.docx")

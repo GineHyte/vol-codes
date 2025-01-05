@@ -218,17 +218,18 @@ class Table3:
                         data[category][tech1] = {}
                     if tech2 not in data[category][tech1]:
                         data[category][tech1][tech2] = {
-                            f"{x}_zone": {"y": 0, "z": 0}
+                            f"{x}_zone": {"w": {"y": 0, "z": 0}, "l": {"y": 0, "z": 0}}
                             for x in codes[tech1]["zones"].keys()
                         }
                     if act not in data[category][tech1][tech2]:
                         data[category][tech1][tech2][act] = {
-                            x: {"y": 0, "z": 0} for x in codes[tech1]["zones"].keys()
+                            x: {"w": {"y": 0, "z": 0}, "l": {"y": 0, "z": 0}}
+                            for x in codes[tech1]["zones"].keys()
                         }
 
-                    data[category][tech1][tech2][act][zone][amplua] += 1
-                    data[category][tech1][tech2][f"{zone}_zone"][amplua] += 1
-        print("transformed data: ", json.dumps(data, sort_keys=True, indent=4))
+                    data[category][tech1][tech2][act][zone][game_res][amplua] += 1
+                    data[category][tech1][tech2][f"{zone}_zone"][game_res][amplua] += 1
+        # print("transformed data: ", json.dumps(data, sort_keys=True, indent=4))
         return data
 
     def table_inner(self, data: dict, cat: str, tech1: str) -> list:
@@ -237,26 +238,32 @@ class Table3:
         for tech2, tech2_data in data[cat][tech1].items():
             for zone_act, zone_act_data in tech2_data.items():
                 if "zone" in zone_act:
-                    for amplua in ["y", "z"]:
-                        if tech2 not in result:
-                            result[tech2] = {}
-                        if "_" not in result[tech2]:
-                            result[tech2]["_"] = []
-                        result[tech2]["_"].append(
-                            str(zone_act_data[amplua])
-                            if amplua in zone_act_data
-                            else "0"
-                        )
-                else:
-                    for zone, zone_data in zone_act_data.items():
+                    for game_res in ["w", "l"]:
                         for amplua in ["y", "z"]:
                             if tech2 not in result:
                                 result[tech2] = {}
-                            if zone_act not in result[tech2]:
-                                result[tech2][zone_act] = []
-                            result[tech2][zone_act].append(
-                                str(zone_data[amplua]) if amplua in zone_data else "0"
-                            )
+                            if "_" not in result[tech2]:
+                                result[tech2]["_"] = []
+                            if game_res in zone_act_data:
+                                result[tech2]["_"].append(
+                                    str(zone_act_data[game_res][amplua])
+                                    if amplua in zone_act_data[game_res]
+                                    else "0"
+                                )
+                else:
+                    for zone, zone_data in zone_act_data.items():
+                        for game_res in ["w", "l"]:
+                            for amplua in ["y", "z"]:
+                                if tech2 not in result:
+                                    result[tech2] = {}
+                                if zone_act not in result[tech2]:
+                                    result[tech2][zone_act] = []
+                                if game_res in zone_data:
+                                    result[tech2][zone_act].append(
+                                        str(zone_data[game_res][amplua])
+                                        if amplua in zone_data[game_res]
+                                        else "0"
+                                    )
 
         return result
 
@@ -281,11 +288,15 @@ class Table3:
                 "Напрям руху м'яча",
                 *[
                     x2
-                    for x1 in [[x] * 2 for x in codes[code_tech]["zones"].values()]
+                    for x1 in [[x] * 4 for x in codes[code_tech]["zones"].values()]
                     for x2 in x1
                 ],
             ],
-            ["Амплуа гравчині", *["Б", "З"] * len(codes[code_tech]["zones"])],
+            [
+                "Результат гри",
+                *[*["WIN"] * 2, *["LOS"] * 2] * len(codes[code_tech]["zones"]),
+            ],
+            ["Амплуа гравчині", *[*["Б", "З"] * 2] * len(codes[code_tech]["zones"])],
         ]
         res = []
 
