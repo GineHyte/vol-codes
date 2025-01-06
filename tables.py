@@ -202,7 +202,7 @@ class Table3:
         data = {}
         for category, games in results.items():
             data[category] = {}
-            data[category]["games_cout"] = len(games)
+            data[category]["games_count"] = len(games)
             for _, game_part in games.items():
                 for value in game_part:
                     if len(value) != 6:
@@ -282,6 +282,7 @@ class Table3:
             codes_to_show.remove("func")
 
         data = self.transform_data(results, codes)
+        len_zones = len(codes[code_tech]["zones"])
         res_inner = self.table_inner(data, cat, code_tech)
         header = [
             [
@@ -294,22 +295,29 @@ class Table3:
             ],
             [
                 "Результат гри",
-                *[*["WIN"] * 2, *["LOS"] * 2] * len(codes[code_tech]["zones"]),
+                *[*["WIN"] * 2, *["LOS"] * 2] * len_zones,
             ],
-            ["Амплуа гравчині", *[*["Б", "З"] * 2] * len(codes[code_tech]["zones"])],
+            ["Амплуа гравчині", *[*["Б", "З"] * 2] * len_zones],
         ]
         res = []
 
         for code in codes_to_show:
             if code not in res_inner:
-                continue
-            res.append(res_inner[code]["_"])
-            res[-1].insert(0, codes[code_tech][code])
+                res.append([*["0"] * 4] * len_zones)
+                res[-1].insert(0, codes[code_tech][code])
+            else:
+                res.append(res_inner[code]["_"])
+                res[-1].insert(0, codes[code_tech][code])
             for func_n, func in codes[code_tech]["func"].items():
                 if func_n == "counter":
                     continue
-                if func_n not in res_inner[code]:
-                    continue
-                res.append(res_inner[code][func_n])
-                res[-1].insert(0, func)
+                if code not in res_inner:
+                    res.append([*["0"] * 4] * len_zones)
+                    res[-1].insert(0, func)
+                elif func_n not in res_inner[code]:
+                    res.append([*["0"] * 4] * len_zones)
+                    res[-1].insert(0, func)
+                else:
+                    res.append(res_inner[code][func_n])
+                    res[-1].insert(0, func)
         return [*header, *res]
